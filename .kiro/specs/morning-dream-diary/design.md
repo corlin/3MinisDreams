@@ -2,7 +2,7 @@
 
 ## 概述
 
-清晨梦想日记是一个基于React Native的跨平台应用，采用现代化的移动端架构设计。应用以用户体验为中心，通过简洁的界面设计和智能的AI辅助功能，帮助用户建立持续的梦想跟踪习惯。
+清晨梦想日记是一个基于React Native的跨平台正向激励应用，采用现代化的移动端架构设计。应用以用户体验和心理激励为中心，通过简洁的界面设计和智能的AI辅助功能，帮助用户建立持续的目标设定和实现习惯，通过记录未来一周的愿望并定期回顾实现情况，创造正向反馈循环。
 
 ## 架构
 
@@ -18,9 +18,9 @@ graph TB
     B --> F[OAuth Providers]
     B --> G[SMS Service]
     
-    D --> H[Dream Management]
-    D --> I[Review System]
-    D --> J[AI Assistant]
+    D --> H[Wish Management]
+    D --> I[Achievement Review System]
+    D --> J[Motivation AI Assistant]
     
     E --> K[Local Storage]
     E --> L[Cloud Sync]
@@ -86,54 +86,66 @@ interface UserProfileService {
 }
 ```
 
-#### 3. 梦想日记模块 (DreamDiaryModule)
+#### 3. 愿望记录模块 (WishRecordModule)
 ```typescript
-interface DreamEntry {
+interface WishEntry {
   id: string
   userId: string
+  title: string
   content: string
-  futureDate: Date
+  targetDate: Date // 预期实现日期（一周后）
   createdAt: Date
+  category: WishCategory // 'personal' | 'career' | 'health' | 'relationship' | 'learning'
+  priority: Priority // 'low' | 'medium' | 'high'
   likes: number
   isLiked: boolean
   tags: string[]
+  motivationLevel: number // 1-10 动机强度
   aiSuggestions?: string[]
 }
 
-interface DreamDiaryService {
-  createDreamEntry(content: string, futureDate: Date): Promise<DreamEntry>
-  getDreamEntries(userId: string, dateRange?: DateRange): Promise<DreamEntry[]>
-  likeDreamEntry(entryId: string): Promise<void>
-  getDreamEntryById(entryId: string): Promise<DreamEntry>
+interface WishRecordService {
+  createWishEntry(wish: CreateWishRequest): Promise<WishEntry>
+  getWishEntries(userId: string, dateRange?: DateRange): Promise<WishEntry[]>
+  likeWishEntry(entryId: string): Promise<void>
+  getWishEntryById(entryId: string): Promise<WishEntry>
+  getReviewableWishes(userId: string): Promise<WishEntry[]>
 }
 ```
 
-#### 4. 回顾系统模块 (ReviewSystemModule)
+#### 4. 成就回顾系统模块 (AchievementReviewModule)
 ```typescript
-interface ReviewEntry {
+interface AchievementReview {
   id: string
-  dreamEntryId: string
+  wishEntryId: string
   userId: string
+  achievementStatus: AchievementStatus // 'fully_achieved' | 'partially_achieved' | 'not_achieved' | 'in_progress'
+  achievementPercentage: number // 0-100
   reflection: string
-  realizationStatus: RealizationStatus
+  feelingAfterReview: EmotionalState // 'proud' | 'motivated' | 'disappointed' | 'determined'
+  lessonsLearned: string[]
+  nextSteps: string[]
   createdAt: Date
 }
 
-interface ReviewSystemService {
-  getReviewableDreams(userId: string): Promise<DreamEntry[]>
-  createReview(dreamEntryId: string, reflection: string, status: RealizationStatus): Promise<ReviewEntry>
-  getReviewHistory(userId: string): Promise<ReviewEntry[]>
-  generateInsights(userId: string): Promise<UserInsights>
+interface AchievementReviewService {
+  getReviewableWishes(userId: string): Promise<WishEntry[]>
+  createAchievementReview(review: CreateReviewRequest): Promise<AchievementReview>
+  getReviewHistory(userId: string): Promise<AchievementReview[]>
+  generateMotivationalInsights(userId: string): Promise<MotivationalInsights>
+  calculateSuccessRate(userId: string, timeRange?: DateRange): Promise<SuccessMetrics>
 }
 ```
 
-#### 5. AI助手模块 (AIAssistantModule)
+#### 5. 激励AI助手模块 (MotivationAIModule)
 ```typescript
-interface AIAssistantService {
+interface MotivationAIService {
   speechToText(audioBlob: Blob): Promise<string>
-  generateWritingSuggestions(content: string): Promise<string[]>
-  generateLifePlanSuggestions(userProfile: UserProfile, dreamHistory: DreamEntry[]): Promise<LifePlanSuggestion[]>
-  analyzeDreamPatterns(dreams: DreamEntry[]): Promise<DreamAnalysis>
+  generateWishSuggestions(content: string): Promise<string[]>
+  generateMotivationalMessages(userProfile: UserProfile, wishHistory: WishEntry[]): Promise<MotivationalMessage[]>
+  analyzeAchievementPatterns(wishes: WishEntry[], reviews: AchievementReview[]): Promise<AchievementAnalysis>
+  suggestGoalImprovements(wish: WishEntry): Promise<GoalImprovementSuggestion[]>
+  generateCelebrationMessage(review: AchievementReview): Promise<CelebrationMessage>
 }
 ```
 
@@ -146,22 +158,22 @@ App
 │   ├── RegisterScreen
 │   └── ForgotPasswordScreen
 ├── MainNavigator (Tab Navigator)
-│   ├── HomeStack
-│   │   ├── HomeScreen (今日梦想)
-│   │   ├── DreamEntryScreen (记录梦想)
-│   │   └── DreamDetailScreen (梦想详情)
-│   ├── ReviewStack
-│   │   ├── ReviewScreen (回顾列表)
-│   │   ├── ReviewDetailScreen (回顾详情)
-│   │   └── InsightsScreen (洞察分析)
+│   ├── WishStack
+│   │   ├── TodayWishScreen (今日愿望)
+│   │   ├── WishEntryScreen (记录愿望)
+│   │   └── WishDetailScreen (愿望详情)
+│   ├── AchievementStack
+│   │   ├── ReviewScreen (成就回顾)
+│   │   ├── AchievementDetailScreen (成就详情)
+│   │   └── SuccessInsightsScreen (成功洞察)
 │   ├── ProfileStack
 │   │   ├── ProfileScreen (个人资料)
 │   │   ├── SettingsScreen (设置)
 │   │   └── ThemeScreen (主题选择)
-│   └── AIAssistantStack
+│   └── MotivationStack
 │       ├── VoiceInputScreen (语音输入)
-│       ├── WritingAssistantScreen (写作助手)
-│       └── LifePlanningScreen (人生规划)
+│       ├── GoalAssistantScreen (目标助手)
+│       └── MotivationCenterScreen (激励中心)
 ```
 
 ## 数据模型
@@ -182,37 +194,44 @@ interface User {
 }
 ```
 
-#### DreamEntry Entity
+#### WishEntry Entity
 ```typescript
-interface DreamEntry {
+interface WishEntry {
   id: string
   userId: string
   title: string
   content: string
-  targetDate: Date // 预期实现日期
+  targetDate: Date // 预期实现日期（记录日期+7天）
   createdAt: Date
   updatedAt: Date
-  status: DreamStatus // 'active' | 'completed' | 'abandoned'
-  category: DreamCategory
+  status: WishStatus // 'pending' | 'achieved' | 'partially_achieved' | 'not_achieved'
+  category: WishCategory // 'personal_growth' | 'career' | 'health' | 'relationships' | 'learning' | 'creativity'
   priority: Priority // 'low' | 'medium' | 'high'
+  motivationLevel: number // 1-10 记录时的动机强度
   likes: number
   tags: string[]
+  specificActions: string[] // 具体行动步骤
+  successCriteria: string // 成功标准
   attachments?: Attachment[]
   aiMetadata?: AIMetadata
 }
 ```
 
-#### ReviewEntry Entity
+#### AchievementReview Entity
 ```typescript
-interface ReviewEntry {
+interface AchievementReview {
   id: string
-  dreamEntryId: string
+  wishEntryId: string
   userId: string
+  achievementStatus: AchievementStatus
+  achievementPercentage: number // 0-100
   reflection: string
-  realizationPercentage: number // 0-100
-  emotionalState: EmotionalState
+  emotionalStateAfter: EmotionalState // 'proud' | 'satisfied' | 'motivated' | 'disappointed' | 'determined'
+  celebrationMoment: string // 庆祝时刻描述
   lessonsLearned: string[]
-  nextSteps: string[]
+  improvementAreas: string[]
+  nextGoals: string[] // 下一步目标
+  gratitudeNotes: string[] // 感恩记录
   createdAt: Date
 }
 ```
@@ -221,12 +240,13 @@ interface ReviewEntry {
 
 ```mermaid
 erDiagram
-    User ||--o{ DreamEntry : creates
-    User ||--o{ ReviewEntry : writes
-    DreamEntry ||--o{ ReviewEntry : reviewed_in
+    User ||--o{ WishEntry : creates
+    User ||--o{ AchievementReview : writes
+    WishEntry ||--o{ AchievementReview : reviewed_in
     User ||--|| UserProfile : has
-    DreamEntry ||--o{ Attachment : contains
-    ReviewEntry ||--o{ Insight : generates
+    WishEntry ||--o{ Attachment : contains
+    AchievementReview ||--o{ MotivationalInsight : generates
+    User ||--o{ SuccessMetrics : tracks
 ```
 
 ## 错误处理

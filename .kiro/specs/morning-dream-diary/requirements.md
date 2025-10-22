@@ -2,14 +2,14 @@
 
 ## 介绍
 
-清晨梦想日记是一款跨平台的React Native应用，旨在帮助用户建立每日梦想跟踪习惯。用户通过每天早晨3分钟的时间，以未来时间的过去时方式记录一周后可能实现的愿望，并通过定期回顾来跟踪梦想实现情况，建立有效的互动反馈机制。
+清晨梦想日记是一款专注于正向激励的跨平台React Native应用，旨在帮助用户建立每日梦想记录和实现习惯。用户通过每天早晨3分钟的时间，记录一周后希望实现的具体愿望和目标，并通过定期回顾来跟踪实现情况，从而建立持续的正向反馈循环，激励个人成长和目标达成。
 
 ## 术语表
 
 - **Dream_Diary_App**: 清晨梦想日记应用系统
 - **User_Profile**: 用户个人信息配置模块
 - **Authentication_System**: 用户身份验证系统
-- **Dream_Entry**: 梦想日记条目
+- **Dream_Entry**: 未来愿望记录条目
 - **Review_System**: 日记回顾系统
 - **Cloud_Sync**: 云端同步服务
 - **AI_Assistant**: AI辅助功能模块
@@ -43,31 +43,31 @@
 
 ### 需求 3
 
-**用户故事:** 作为日常用户，我希望每天早晨能够快速记录我的未来梦想，以便建立持续的梦想跟踪习惯
+**用户故事:** 作为日常用户，我希望每天早晨能够快速记录我一周后想要实现的具体愿望和目标，以便建立持续的正向激励习惯
 
 #### 验收标准
 
-1. THE Dream_Diary_App SHALL 在每日早晨发送梦想记录提醒
-2. THE Dream_Entry SHALL 支持用户以未来时间过去时方式记录一周后愿望
-3. THE Dream_Entry SHALL 限制单次记录时间为3分钟以内
-4. THE Dream_Entry SHALL 允许用户为自己的梦想条目点赞
-5. WHEN 用户完成梦想记录, THE Dream_Diary_App SHALL 保存条目并显示确认信息
+1. THE Dream_Diary_App SHALL 在每日早晨发送愿望记录提醒
+2. THE Dream_Entry SHALL 支持用户记录一周后希望实现的具体愿望和目标
+3. THE Dream_Entry SHALL 限制单次记录时间为3分钟以内，促进快速聚焦
+4. THE Dream_Entry SHALL 允许用户为自己的愿望条目点赞，增强正向反馈
+5. WHEN 用户完成愿望记录, THE Dream_Diary_App SHALL 保存条目并显示激励性确认信息
 
 ### 需求 4
 
-**用户故事:** 作为长期用户，我希望能够定期回顾我的梦想日记，以便了解梦想实现情况并写下感悟
+**用户故事:** 作为长期用户，我希望能够定期回顾我一周前记录的愿望，以便了解实现情况并获得成就感和持续激励
 
 #### 验收标准
 
-1. THE Review_System SHALL 根据当前日期计算可回顾的历史梦想条目
-2. THE Review_System SHALL 显示一周前记录的梦想条目供用户回顾
-3. THE Review_System SHALL 允许用户记录梦想实现情况的感悟
-4. THE Review_System SHALL 提供梦想实现统计和趋势分析
-5. WHEN 用户完成回顾, THE Dream_Diary_App SHALL 保存感悟内容
+1. THE Review_System SHALL 根据当前日期自动识别一周前记录的愿望条目
+2. THE Review_System SHALL 显示一周前记录的愿望条目供用户回顾和确认实现状态
+3. THE Review_System SHALL 允许用户标记愿望实现情况并记录成就感悟
+4. THE Review_System SHALL 提供愿望实现率统计和正向激励反馈
+5. WHEN 用户完成回顾, THE Dream_Diary_App SHALL 保存实现状态和感悟，并提供激励性反馈
 
 ### 需求 5
 
-**用户故事:** 作为多设备用户，我希望我的梦想日记数据能够安全地在不同设备间同步，以便随时随地访问我的内容
+**用户故事:** 作为多设备用户，我希望我的愿望记录数据能够安全地在不同设备间同步，以便随时随地访问我的目标和成就
 
 #### 验收标准
 
@@ -79,14 +79,14 @@
 
 ### 需求 6
 
-**用户故事:** 作为现代用户，我希望应用能够利用AI技术提升我的使用体验，以便更高效地记录和管理我的梦想
+**用户故事:** 作为现代用户，我希望应用能够利用AI技术提升我的使用体验，以便更高效地记录和实现我的愿望目标
 
 #### 验收标准
 
-1. THE AI_Assistant SHALL 支持语音输入转文字功能
-2. THE AI_Assistant SHALL 提供AI辅助写作建议
-3. THE AI_Assistant SHALL 提供人生规划智能建议
-4. THE AI_Assistant SHALL 分析用户梦想模式并提供个性化反馈
+1. THE AI_Assistant SHALL 支持语音输入转文字功能，便于快速记录愿望
+2. THE AI_Assistant SHALL 提供AI辅助写作建议，帮助用户更清晰地表达目标
+3. THE AI_Assistant SHALL 提供个人成长和目标实现的智能建议
+4. THE AI_Assistant SHALL 分析用户愿望实现模式并提供个性化激励反馈
 5. WHEN 用户使用AI功能时, THE Dream_Diary_App SHALL 保护用户隐私数据
 
 ### 需求 7
