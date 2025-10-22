@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Platform } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 import { testStorageService } from './src/utils/testStorage';
 import { testNotificationService } from './src/utils/testNotifications';
+import { testUserService } from './src/utils/testUserService';
+import { testPlatformFixes } from './src/utils/testPlatformFixes';
 import { applySimpleWebFixes } from './src/utils/simpleWebFixes';
 import { NotificationService } from './src/services/notificationService';
 
@@ -22,8 +25,10 @@ export default function App() {
     
     // 在开发模式下测试存储服务
     if (__DEV__) {
+      testPlatformFixes();
       testStorageService();
       testNotificationService();
+      testUserService();
     }
   }, []);
 
@@ -42,9 +47,9 @@ export default function App() {
   };
 
   return (
-    <>
+    <ThemeProvider>
       <AppNavigator />
       <StatusBar style="auto" />
-    </>
+    </ThemeProvider>
   );
 }

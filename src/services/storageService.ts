@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WishEntry, AchievementReview, User } from '../types';
+import { WishEntry, AchievementReview, User, UserPreferences, NotificationSettings } from '../types';
 import { 
   serializeWishList, 
   deserializeWishList, 
@@ -96,6 +96,30 @@ export class StorageService {
     }
   }
 
+  // 获取单个愿望的别名方法
+  static async getWish(id: string): Promise<WishEntry | null> {
+    return this.getWishById(id);
+  }
+
+  // 更新愿望
+  static async updateWish(updatedWish: WishEntry): Promise<void> {
+    try {
+      const wishes = await this.getAllWishes();
+      const index = wishes.findIndex(wish => wish.id === updatedWish.id);
+      
+      if (index >= 0) {
+        wishes[index] = { ...updatedWish, updatedAt: new Date() };
+        const serializedWishes = serializeWishList(wishes);
+        await this.saveData(STORAGE_KEYS.WISHES, serializedWishes);
+      } else {
+        throw new Error(`Wish with id ${updatedWish.id} not found`);
+      }
+    } catch (error) {
+      console.error('Error updating wish:', error);
+      throw error;
+    }
+  }
+
   static async getWishesByUserId(userId: string): Promise<WishEntry[]> {
     try {
       const wishes = await this.getAllWishes();
@@ -178,6 +202,62 @@ export class StorageService {
     } catch (error) {
       console.error('Error loading user:', error);
       return null;
+    }
+  }
+
+  // 用户偏好设置相关方法
+  static async saveUserPreferences(preferences: UserPreferences): Promise<void> {
+    try {
+      await this.saveData(STORAGE_KEYS.USER_PREFERENCES, preferences);
+    } catch (error) {
+      console.error('Error saving user preferences:', error);
+      throw error;
+    }
+  }
+
+  static async getUserPreferences(): Promise<UserPreferences | null> {
+    try {
+      return await this.loadData<UserPreferences>(STORAGE_KEYS.USER_PREFERENCES);
+    } catch (error) {
+      console.error('Error loading user preferences:', error);
+      return null;
+    }
+  }
+
+  // 创建默认用户
+  static async createDefaultUser(): Promise<User> {
+    const defaultUser: User = {
+      id: 'default-user-' + Date.now(),
+      nickname: '愿望追梦人',
+      description: '每天记录愿望，追求更好的自己',
+      preferences: {
+        theme: 'light',
+        language: 'zh',
+        notificationSettings: {
+          enabled: true,
+          dailyReminderTime: '08:00',
+          reviewReminderEnabled: true,
+        }
+      },
+      createdAt: new Date(),
+      lastLoginAt: new Date(),
+    };
+    
+    await this.saveUser(defaultUser);
+    return defaultUser;
+  }
+
+  // 获取或创建用户
+  static async getOrCreateUser(): Promise<User> {
+    try {
+      let user = await this.getUser();
+      if (!user) {
+        user = await this.createDefaultUser();
+      }
+      return user;
+    } catch (error) {
+      console.error('Error getting or creating user:', error);
+      throw error;
     }
   }
 

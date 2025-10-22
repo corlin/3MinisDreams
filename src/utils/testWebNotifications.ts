@@ -1,10 +1,16 @@
 // Web端通知功能测试工具
+import { Platform } from 'react-native';
 
 export const testWebNotificationSupport = () => {
+  // 只在Web平台执行
+  if (Platform.OS !== 'web') {
+    return false;
+  }
+  
   console.log('🌐 开始Web端通知支持测试...');
   
   // 检查浏览器支持
-  if (!('Notification' in window)) {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
     console.error('❌ 浏览器不支持Notification API');
     return false;
   }
@@ -16,7 +22,8 @@ export const testWebNotificationSupport = () => {
 };
 
 export const requestWebNotificationPermission = async (): Promise<boolean> => {
-  if (!('Notification' in window)) {
+  // 只在Web平台执行
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || !('Notification' in window)) {
     console.error('❌ 浏览器不支持通知');
     return false;
   }
@@ -49,10 +56,15 @@ export const requestWebNotificationPermission = async (): Promise<boolean> => {
 };
 
 export const sendTestWebNotification = (title: string, body: string): boolean => {
+  // 只在Web平台执行
+  if (Platform.OS !== 'web') {
+    return false;
+  }
+  
   console.log('🔔 开始发送Web通知...');
   console.log('📋 通知内容:', { title, body });
   
-  if (!('Notification' in window)) {
+  if (typeof window === 'undefined' || !('Notification' in window)) {
     console.error('❌ 浏览器不支持通知');
     return false;
   }
@@ -128,8 +140,9 @@ export const scheduleDelayedWebNotification = (
   title: string, 
   body: string, 
   delayMs: number
-): number | null => {
-  if (!('Notification' in window) || Notification.permission !== 'granted') {
+): ReturnType<typeof setTimeout> | null => {
+  // 只在Web平台执行
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || !('Notification' in window) || Notification.permission !== 'granted') {
     console.error('❌ 无法安排延时通知：权限不足');
     return null;
   }
@@ -162,7 +175,7 @@ export const scheduleDelayedWebNotification = (
 };
 
 // 在开发模式下自动测试
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (Platform.OS === 'web' && typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   // 延迟执行，确保页面加载完成
   setTimeout(async () => {
     console.log('🧪 开始Web端通知自动测试...');

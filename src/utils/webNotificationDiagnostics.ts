@@ -1,4 +1,5 @@
 // Web端通知诊断工具
+import { Platform } from 'react-native';
 
 export interface NotificationDiagnostics {
   browserSupport: boolean;
@@ -25,14 +26,14 @@ export const runNotificationDiagnostics = (): NotificationDiagnostics => {
     recommendations: [],
   };
 
-  // 检查浏览器支持
-  if (typeof window === 'undefined') {
-    diagnostics.issues.push('不在浏览器环境中运行');
+  // 检查是否在Web平台和浏览器环境中
+  if (Platform.OS !== 'web' || typeof window === 'undefined' || typeof navigator === 'undefined') {
+    diagnostics.issues.push('不在Web浏览器环境中运行');
     return diagnostics;
   }
 
   diagnostics.userAgent = navigator.userAgent;
-  diagnostics.protocol = window.location.protocol;
+  diagnostics.protocol = window.location?.protocol || 'unknown';
 
   // 检查Notification API支持
   if (!('Notification' in window)) {

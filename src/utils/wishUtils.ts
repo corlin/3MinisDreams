@@ -101,6 +101,9 @@ export const deserializeWishEntry = (data: any): WishEntry => {
     targetDate: new Date(data.targetDate),
     createdAt: new Date(data.createdAt),
     updatedAt: new Date(data.updatedAt),
+    // 确保旧数据也有点赞相关字段
+    likes: data.likes ?? 0,
+    isLiked: data.isLiked ?? false,
   };
 };
 

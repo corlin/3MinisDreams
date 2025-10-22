@@ -10,16 +10,21 @@ import {
   Platform,
 } from 'react-native';
 import Constants from 'expo-constants';
-import { COLORS, SPACING, FONT_SIZES } from '../constants';
+import { COLORS, SPACING, FONT_SIZES, getColors } from '../constants';
 import { NotificationService, NotificationSettings } from '../services/notificationService';
+import { UserService } from '../services/userService';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function SettingsScreen() {
+  const { theme } = useTheme();
   const [settings, setSettings] = useState<NotificationSettings>({
     enabled: true,
     dailyReminderTime: '08:00',
     reviewReminderEnabled: true,
   });
   const [loading, setLoading] = useState(true);
+
+  const colors = getColors(theme);
 
   useEffect(() => {
     loadSettings();
@@ -39,6 +44,8 @@ export default function SettingsScreen() {
   const saveSettings = async (newSettings: NotificationSettings) => {
     try {
       await NotificationService.saveNotificationSettings(newSettings);
+      // Also update user preferences
+      await UserService.updatePreferences({ notificationSettings: newSettings });
       setSettings(newSettings);
       Alert.alert('成功', '设置已保存');
     } catch (error) {
@@ -114,59 +121,87 @@ export default function SettingsScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>加载中...</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>加载中...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={styles.title}>通知设置</Text>
+        <Text style={[styles.title, { color: colors.text }]}>通知设置</Text>
         
         {/* 通知总开关 */}
-        <View style={styles.settingItem}>
+        <View style={[styles.settingItem, { backgroundColor: colors.surface }]}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingTitle}>启用通知</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={[styles.settingTitle, { color: colors.text }]}>启用通知</Text>
+            <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
               开启后将收到每日愿望记录和回顾提醒
             </Text>
           </View>
           <Switch
             value={settings.enabled}
             onValueChange={handleToggleNotifications}
-            trackColor={{ false: COLORS.border, true: COLORS.primary }}
-            thumbColor={settings.enabled ? COLORS.background : COLORS.textSecondary}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={settings.enabled ? colors.background : colors.textSecondary}
           />
         </View>
 
         {/* 每日提醒时间 */}
         <TouchableOpacity
-          style={[styles.settingItem, !settings.enabled && styles.disabledItem]}
+          style={[
+            styles.settingItem, 
+            { backgroundColor: colors.surface },
+            !settings.enabled && styles.disabledItem
+          ]}
           onPress={settings.enabled ? showTimePickerAlert : undefined}
           disabled={!settings.enabled}
         >
           <View style={styles.settingInfo}>
-            <Text style={[styles.settingTitle, !settings.enabled && styles.disabledText]}>
+            <Text style={[
+              styles.settingTitle, 
+              { color: colors.text },
+              !settings.enabled && { color: colors.textSecondary }
+            ]}>
               每日提醒时间
             </Text>
-            <Text style={[styles.settingDescription, !settings.enabled && styles.disabledText]}>
+            <Text style={[
+              styles.settingDescription, 
+              { color: colors.textSecondary },
+              !settings.enabled && { color: colors.textSecondary }
+            ]}>
               当前设置: {settings.dailyReminderTime}
             </Text>
           </View>
-          <Text style={[styles.settingValue, !settings.enabled && styles.disabledText]}>
+          <Text style={[
+            styles.settingValue, 
+            { color: colors.primary },
+            !settings.enabled && { color: colors.textSecondary }
+          ]}>
             {settings.dailyReminderTime}
           </Text>
         </TouchableOpacity>
 
         {/* 回顾提醒开关 */}
-        <View style={[styles.settingItem, !settings.enabled && styles.disabledItem]}>
+        <View style={[
+          styles.settingItem, 
+          { backgroundColor: colors.surface },
+          !settings.enabled && styles.disabledItem
+        ]}>
           <View style={styles.settingInfo}>
-            <Text style={[styles.settingTitle, !settings.enabled && styles.disabledText]}>
+            <Text style={[
+              styles.settingTitle, 
+              { color: colors.text },
+              !settings.enabled && { color: colors.textSecondary }
+            ]}>
               回顾提醒
             </Text>
-            <Text style={[styles.settingDescription, !settings.enabled && styles.disabledText]}>
+            <Text style={[
+              styles.settingDescription, 
+              { color: colors.textSecondary },
+              !settings.enabled && { color: colors.textSecondary }
+            ]}>
               一周后自动提醒回顾愿望实现情况
             </Text>
           </View>
@@ -174,24 +209,24 @@ export default function SettingsScreen() {
             value={settings.reviewReminderEnabled && settings.enabled}
             onValueChange={handleToggleReviewReminder}
             disabled={!settings.enabled}
-            trackColor={{ false: COLORS.border, true: COLORS.primary }}
-            thumbColor={settings.reviewReminderEnabled && settings.enabled ? COLORS.background : COLORS.textSecondary}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={settings.reviewReminderEnabled && settings.enabled ? colors.background : colors.textSecondary}
           />
         </View>
 
         {/* 测试功能 */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>测试功能</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>测试功能</Text>
           
           <TouchableOpacity
-            style={[styles.button, styles.testButton]}
+            style={[styles.button, { backgroundColor: colors.primary }]}
             onPress={sendTestNotification}
           >
             <Text style={styles.buttonText}>发送测试通知</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, styles.infoButton]}
+            style={[styles.button, { backgroundColor: colors.textSecondary }]}
             onPress={viewScheduledNotifications}
           >
             <Text style={styles.buttonText}>查看已安排通知</Text>
@@ -199,9 +234,9 @@ export default function SettingsScreen() {
         </View>
 
         {/* 说明信息 */}
-        <View style={styles.infoSection}>
-          <Text style={styles.infoTitle}>关于通知</Text>
-          <Text style={styles.infoText}>
+        <View style={[styles.infoSection, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.infoTitle, { color: colors.text }]}>关于通知</Text>
+          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
             • 每日提醒：在设定时间提醒您记录新的愿望{'\n'}
             • 回顾提醒：在愿望目标日期提醒您回顾实现情况{'\n'}
             • 个性化消息：每次通知都会显示不同的激励消息{'\n'}
@@ -250,7 +285,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   content: {
     padding: SPACING.lg,
@@ -258,13 +292,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZES.xxl,
     fontWeight: 'bold',
-    color: COLORS.text,
     marginBottom: SPACING.xl,
     textAlign: 'center',
   },
   loadingText: {
     fontSize: FONT_SIZES.md,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     marginTop: SPACING.xl,
   },
@@ -274,7 +306,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.lg,
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
     marginBottom: SPACING.md,
     minHeight: 70,
@@ -289,21 +320,15 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.text,
     marginBottom: SPACING.xs,
   },
   settingDescription: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
     lineHeight: 18,
   },
   settingValue: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.primary,
-  },
-  disabledText: {
-    color: COLORS.textSecondary,
   },
   section: {
     marginTop: SPACING.xl,
@@ -312,7 +337,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: '600',
-    color: COLORS.text,
     marginBottom: SPACING.md,
   },
   button: {
@@ -322,32 +346,23 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
     alignItems: 'center',
   },
-  testButton: {
-    backgroundColor: COLORS.primary,
-  },
-  infoButton: {
-    backgroundColor: COLORS.textSecondary,
-  },
   buttonText: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.background,
+    color: '#ffffff',
   },
   infoSection: {
     marginTop: SPACING.xl,
     padding: SPACING.lg,
-    backgroundColor: COLORS.surface,
     borderRadius: 12,
   },
   infoTitle: {
     fontSize: FONT_SIZES.md,
     fontWeight: '600',
-    color: COLORS.text,
     marginBottom: SPACING.sm,
   },
   infoText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
     lineHeight: 20,
   },
   warningSection: {

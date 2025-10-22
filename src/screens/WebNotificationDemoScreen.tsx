@@ -24,7 +24,7 @@ import {
 export default function WebNotificationDemoScreen() {
   const [notificationSupported, setNotificationSupported] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [delayedNotificationId, setDelayedNotificationId] = useState<number | null>(null);
+  const [delayedNotificationId, setDelayedNotificationId] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [diagnostics, setDiagnostics] = useState<any>(null);
 
   useEffect(() => {

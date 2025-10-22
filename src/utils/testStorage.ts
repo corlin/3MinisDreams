@@ -22,7 +22,12 @@ export const testStorageService = async (): Promise<void> => {
       description: '这是一个测试用户',
       preferences: {
         theme: 'light',
-        language: 'zh'
+        language: 'zh',
+        notificationSettings: {
+          enabled: true,
+          dailyReminderTime: '08:00',
+          reviewReminderEnabled: true,
+        }
       },
       createdAt: new Date(),
       lastLoginAt: new Date()

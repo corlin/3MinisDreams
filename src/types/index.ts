@@ -46,13 +46,18 @@ export interface User {
   id: string;
   nickname: string;
   description: string;
-  preferences?: {
-    theme: 'light' | 'dark';
-    language: 'zh' | 'en';
-  };
+  preferences: UserPreferences;
   createdAt: Date;
   lastLoginAt: Date;
 }
+
+export interface UserPreferences {
+  theme: AppTheme;
+  language: 'zh' | 'en';
+  notificationSettings: NotificationSettings;
+}
+
+export type AppTheme = 'light' | 'dark';
 
 // 通知相关类型
 export interface NotificationSettings {

@@ -1,6 +1,7 @@
 // 应用常量
+import { AppTheme } from '../types';
 
-export const COLORS = {
+export const LIGHT_COLORS = {
   primary: '#6366f1',
   secondary: '#8b5cf6',
   background: '#f8fafc',
@@ -11,6 +12,25 @@ export const COLORS = {
   error: '#ef4444',
   success: '#10b981',
 };
+
+export const DARK_COLORS = {
+  primary: '#818cf8',
+  secondary: '#a78bfa',
+  background: '#0f172a',
+  surface: '#1e293b',
+  text: '#f1f5f9',
+  textSecondary: '#94a3b8',
+  border: '#334155',
+  error: '#f87171',
+  success: '#34d399',
+};
+
+export const getColors = (theme: AppTheme) => {
+  return theme === 'light' ? LIGHT_COLORS : DARK_COLORS;
+};
+
+// Default colors for backward compatibility
+export const COLORS = LIGHT_COLORS;
 
 export const SPACING = {
   xs: 4,

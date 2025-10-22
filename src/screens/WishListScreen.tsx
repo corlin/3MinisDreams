@@ -9,7 +9,9 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { WishStackParamList } from '../navigation/AppNavigator';
 import { WishEntry, WishCategory, WishStatus } from '../types';
 import { COLORS, SPACING, FONT_SIZES } from '../constants';
 import { StorageService } from '../services/storageService';
@@ -18,8 +20,10 @@ import { getCategoryDisplayName, getStatusDisplayName } from '../utils/wishUtils
 
 type SortOption = 'date_desc' | 'date_asc' | 'category' | 'status';
 type FilterOption = 'all' | WishCategory | WishStatus;
+type WishListNavigationProp = StackNavigationProp<WishStackParamList, 'WishList'>;
 
 export default function WishListScreen() {
+  const navigation = useNavigation<WishListNavigationProp>();
   const [wishes, setWishes] = useState<WishEntry[]>([]);
   const [filteredWishes, setFilteredWishes] = useState<WishEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,17 +86,7 @@ export default function WishListScreen() {
 
   // 处理愿望卡片点击
   const handleWishPress = (wish: WishEntry) => {
-    Alert.alert(
-      wish.title,
-      wish.content,
-      [
-        { text: '关闭', style: 'cancel' },
-        { text: '查看详情', onPress: () => {
-          // TODO: 导航到愿望详情页面
-          console.log('Navigate to wish detail:', wish.id);
-        }}
-      ]
-    );
+    navigation.navigate('WishDetail', { wishId: wish.id });
   };
 
   // 获取排序选项显示名称
