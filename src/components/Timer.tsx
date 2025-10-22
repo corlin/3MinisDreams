@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../constants';
+import { getAnimationConfig } from '../utils/platform';
 
 interface TimerProps {
   duration?: number; // 计时时长（秒），默认3分钟
@@ -54,7 +55,7 @@ export default function Timer({
           Animated.timing(progressAnim, {
             toValue: progress,
             duration: 100,
-            useNativeDriver: false,
+            ...getAnimationConfig(false), // 进度动画需要操作布局属性，不能使用 native driver
           }).start();
 
           // 计时结束
@@ -89,12 +90,12 @@ export default function Timer({
       Animated.timing(pulseAnim, {
         toValue: 1.2,
         duration: 200,
-        useNativeDriver: true,
+        ...getAnimationConfig(true),
       }),
       Animated.timing(pulseAnim, {
         toValue: 1,
         duration: 200,
-        useNativeDriver: true,
+        ...getAnimationConfig(true),
       }),
     ]).start();
 
@@ -125,12 +126,12 @@ export default function Timer({
         Animated.timing(pulseAnim, {
           toValue: 1.05,
           duration: 1000,
-          useNativeDriver: true,
+          ...getAnimationConfig(true),
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true,
+          ...getAnimationConfig(true),
         }),
       ])
     ).start();
@@ -151,12 +152,12 @@ export default function Timer({
         Animated.timing(pulseAnim, {
           toValue: 1.05,
           duration: 1000,
-          useNativeDriver: true,
+          ...getAnimationConfig(true),
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true,
+          ...getAnimationConfig(true),
         }),
       ])
     ).start();
@@ -198,7 +199,10 @@ export default function Timer({
       <Animated.View 
         style={[
           styles.timerCircle,
-          { transform: [{ scale: pulseAnim }] }
+          { 
+            transform: [{ scale: pulseAnim }],
+            pointerEvents: 'none', // 明确设置 pointerEvents 在 style 中
+          }
         ]}
       >
         <View style={styles.progressContainer}>
@@ -210,6 +214,7 @@ export default function Timer({
                   inputRange: [0, 1],
                   outputRange: ['100%', '0%'],
                 }),
+                pointerEvents: 'none', // 明确设置 pointerEvents 在 style 中
               }
             ]}
           />

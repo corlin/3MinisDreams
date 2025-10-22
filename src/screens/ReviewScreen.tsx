@@ -13,6 +13,7 @@ import { WishEntry, AchievementReview, AchievementStatus, EmotionalState, WishSt
 import { StorageService } from '../services/storageService';
 import { isWishReviewable, formatRelativeTime, formatDate, getDateOneWeekAgo } from '../utils/dateUtils';
 import { createMultipleTestWishes, clearTestData, checkWishStatusUpdates } from '../utils/testReviewData';
+import { getAnimationConfig } from '../utils/platform';
 
 const { width } = Dimensions.get('window');
 
@@ -192,12 +193,12 @@ const ReviewScreen: React.FC<ReviewScreenProps> = ({ navigation }) => {
       Animated.timing(celebrationAnimation, {
         toValue: 1,
         duration: 500,
-        useNativeDriver: true,
+        ...getAnimationConfig(true),
       }),
       Animated.timing(celebrationAnimation, {
         toValue: 0,
         duration: 500,
-        useNativeDriver: true,
+        ...getAnimationConfig(true),
       }),
     ]).start(() => {
       setShowCelebration(false);
@@ -340,6 +341,7 @@ const ReviewScreen: React.FC<ReviewScreenProps> = ({ navigation }) => {
                   }),
                 },
               ],
+              pointerEvents: 'none', // 明确设置 pointerEvents 在 style 中
             },
           ]}
         >
@@ -546,10 +548,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
     borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     elevation: 3,
   },
   wishTitle: {
@@ -675,10 +674,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 15,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     elevation: 3,
   },
   statsTitle: {

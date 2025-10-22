@@ -2,11 +2,12 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Text } from 'react-native';
+import { Text, Platform } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import WishEntryScreen from '../screens/WishEntryScreen';
-import WishListScreen from '../screens/WishListScreen';
 import ReviewScreen from '../screens/ReviewScreen';
+
+import WishListScreen from '../screens/WishListScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type TabParamList = {
@@ -39,7 +40,7 @@ function MainTabNavigator() {
         },
         headerTintColor: '#ffffff',
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: '600',
         },
       }}
     >

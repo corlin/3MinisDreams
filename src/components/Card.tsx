@@ -20,13 +20,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderRadius: 12,
     padding: SPACING.md,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
+    // Use boxShadow for web compatibility instead of shadow* props
+    boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.1)',
+    // Keep elevation for Android
     elevation: 5,
   },
 });
