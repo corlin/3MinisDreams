@@ -53,3 +53,12 @@ export interface User {
   createdAt: Date;
   lastLoginAt: Date;
 }
+
+// 通知相关类型
+export interface NotificationSettings {
+  enabled: boolean;
+  dailyReminderTime: string; // HH:MM 格式
+  reviewReminderEnabled: boolean;
+}
+
+export type NotificationType = 'daily_reminder' | 'review_reminder';

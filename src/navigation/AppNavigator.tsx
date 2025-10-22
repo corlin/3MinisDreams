@@ -6,15 +6,22 @@ import { Text, Platform } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import WishEntryScreen from '../screens/WishEntryScreen';
 import ReviewScreen from '../screens/ReviewScreen';
-
 import WishListScreen from '../screens/WishListScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import WebNotificationDemoScreen from '../screens/WebNotificationDemoScreen';
 
 export type TabParamList = {
   WishEntry: undefined;
   WishList: undefined;
   Review: undefined;
+  ProfileStack: undefined;
+};
+
+export type ProfileStackParamList = {
   Profile: undefined;
+  Settings: undefined;
+  WebNotificationDemo: undefined;
 };
 
 export type RootStackParamList = {
@@ -24,6 +31,39 @@ export type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
+const ProfileStack = createStackNavigator<ProfileStackParamList>();
+
+function ProfileStackNavigator() {
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#6366f1',
+        },
+        headerTintColor: '#ffffff',
+        headerTitleStyle: {
+          fontWeight: '600',
+        },
+      }}
+    >
+      <ProfileStack.Screen 
+        name="Profile" 
+        component={ProfileScreen}
+        options={{ title: '个人资料' }}
+      />
+      <ProfileStack.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{ title: '通知设置' }}
+      />
+      <ProfileStack.Screen 
+        name="WebNotificationDemo" 
+        component={WebNotificationDemoScreen}
+        options={{ title: 'Web通知演示' }}
+      />
+    </ProfileStack.Navigator>
+  );
+}
 
 function MainTabNavigator() {
   return (
@@ -35,13 +75,7 @@ function MainTabNavigator() {
           backgroundColor: '#ffffff',
           borderTopColor: '#e2e8f0',
         },
-        headerStyle: {
-          backgroundColor: '#6366f1',
-        },
-        headerTintColor: '#ffffff',
-        headerTitleStyle: {
-          fontWeight: '600',
-        },
+        headerShown: false,
       }}
     >
       <Tab.Screen 
@@ -49,7 +83,15 @@ function MainTabNavigator() {
         component={WishEntryScreen}
         options={{ 
           title: '记录愿望',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>✨</Text>
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>✨</Text>,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#6366f1',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
         }}
       />
       <Tab.Screen 
@@ -57,7 +99,15 @@ function MainTabNavigator() {
         component={WishListScreen}
         options={{ 
           title: '愿望列表',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📝</Text>
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📝</Text>,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#6366f1',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
         }}
       />
       <Tab.Screen 
@@ -65,12 +115,20 @@ function MainTabNavigator() {
         component={ReviewScreen}
         options={{ 
           title: '成就回顾',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏆</Text>
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏆</Text>,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#6366f1',
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
         }}
       />
       <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
+        name="ProfileStack" 
+        component={ProfileStackNavigator}
         options={{ 
           title: '个人资料',
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text>

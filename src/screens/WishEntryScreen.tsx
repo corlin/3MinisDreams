@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { WishCategory, Priority } from '../types';
 import { StorageService } from '../services/storageService';
+import { NotificationService } from '../services/notificationService';
 import { createWishEntry, validateWishEntry, getCategoryDisplayName, generateUserId } from '../utils/wishUtils';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -67,6 +68,14 @@ export default function WishEntryScreen() {
 
       // 保存到本地存储
       await StorageService.saveWishEntry(newWish);
+
+      // 设置回顾提醒
+      try {
+        await NotificationService.scheduleReviewReminder(newWish.id, newWish.targetDate);
+      } catch (error) {
+        console.error('设置回顾提醒失败:', error);
+        // 不阻塞主流程，只记录错误
+      }
 
       // 显示成功提示
       const focusTimeText = focusTime > 0 ? `\n\n专注时间：${Math.floor(focusTime / 60)}分${focusTime % 60}秒` : '';
