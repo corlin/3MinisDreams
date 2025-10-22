@@ -1,5 +1,14 @@
 import { WishEntry, WishCategory, Priority, WishStatus } from '../types';
 
+// 格式化日期显示
+export const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+};
+
 // 生成唯一ID
 export const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
