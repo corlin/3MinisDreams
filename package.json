@@ -1,6 +1,7 @@
 {
-  "name": "morningdreamdiary",
-  "version": "1.0.0",
+  "name": "morning-dream-diary",
+  "version": "0.1.0",
+  "description": "晨梦日记 - 记录和分析梦境的移动应用",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
@@ -9,10 +10,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^7.4.9",
+    "@react-navigation/native": "^7.1.18",
+    "@react-navigation/stack": "^7.4.10",
     "expo": "~54.0.18",
     "expo-status-bar": "~3.0.8",
     "react": "19.1.0",
-    "react-native": "0.81.5"
+    "react-native": "0.81.5",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
