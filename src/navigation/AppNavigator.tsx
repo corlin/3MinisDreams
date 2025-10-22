@@ -6,11 +6,13 @@ import { Text } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import WishEntryScreen from '../screens/WishEntryScreen';
 import WishListScreen from '../screens/WishListScreen';
+import ReviewScreen from '../screens/ReviewScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type TabParamList = {
   WishEntry: undefined;
   WishList: undefined;
+  Review: undefined;
   Profile: undefined;
 };
 
@@ -55,6 +57,14 @@ function MainTabNavigator() {
         options={{ 
           title: '愿望列表',
           tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📝</Text>
+        }}
+      />
+      <Tab.Screen 
+        name="Review" 
+        component={ReviewScreen}
+        options={{ 
+          title: '成就回顾',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏆</Text>
         }}
       />
       <Tab.Screen 

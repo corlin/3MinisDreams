@@ -1,6 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WishEntry, AchievementReview, User } from '../types';
-import { serializeWishList, deserializeWishList } from '../utils/wishUtils';
+import { 
+  serializeWishList, 
+  deserializeWishList, 
+  serializeReviewList, 
+  deserializeReviewList 
+} from '../utils/wishUtils';
 
 // 存储键常量
 const STORAGE_KEYS = {
@@ -124,7 +129,9 @@ export class StorageService {
         reviews.push(review);
       }
       
-      await this.saveData(STORAGE_KEYS.REVIEWS, reviews);
+      // 序列化日期对象后保存
+      const serializedReviews = serializeReviewList(reviews);
+      await this.saveData(STORAGE_KEYS.REVIEWS, serializedReviews);
     } catch (error) {
       console.error('Error saving achievement review:', error);
       throw error;
@@ -133,8 +140,12 @@ export class StorageService {
 
   static async getAllReviews(): Promise<AchievementReview[]> {
     try {
-      const reviews = await this.loadData<AchievementReview[]>(STORAGE_KEYS.REVIEWS);
-      return reviews || [];
+      const reviewsData = await this.loadData<any[]>(STORAGE_KEYS.REVIEWS);
+      if (!reviewsData) {
+        return [];
+      }
+      // 反序列化日期对象
+      return deserializeReviewList(reviewsData);
     } catch (error) {
       console.error('Error loading reviews:', error);
       return [];

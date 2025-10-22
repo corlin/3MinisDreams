@@ -1,4 +1,4 @@
-import { WishEntry, WishCategory, Priority, WishStatus } from '../types';
+import { WishEntry, WishCategory, Priority, WishStatus, AchievementReview } from '../types';
 
 // 格式化日期显示
 export const formatDate = (date: Date): string => {
@@ -160,4 +160,30 @@ export const getStatusDisplayName = (status: WishStatus): string => {
     not_achieved: '未实现',
   };
   return statusNames[status] || status;
+};
+
+// 序列化成就回顾（处理Date对象）
+export const serializeAchievementReview = (review: AchievementReview): any => {
+  return {
+    ...review,
+    createdAt: review.createdAt.toISOString(),
+  };
+};
+
+// 反序列化成就回顾（恢复Date对象）
+export const deserializeAchievementReview = (data: any): AchievementReview => {
+  return {
+    ...data,
+    createdAt: new Date(data.createdAt),
+  };
+};
+
+// 序列化成就回顾列表
+export const serializeReviewList = (reviews: AchievementReview[]): any[] => {
+  return reviews.map(serializeAchievementReview);
+};
+
+// 反序列化成就回顾列表
+export const deserializeReviewList = (data: any[]): AchievementReview[] => {
+  return data.map(deserializeAchievementReview);
 };
