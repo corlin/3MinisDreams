@@ -23,6 +23,7 @@ export interface WishEntry {
   tags: string[];
   specificActions: string[]; // 具体行动步骤
   successCriteria: string; // 成功标准
+  focusTime?: number; // 专注时间（秒）
 }
 
 export interface AchievementReview {

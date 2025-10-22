@@ -29,7 +29,8 @@ export const createWishEntry = (
   motivationLevel: number = 5,
   tags: string[] = [],
   specificActions: string[] = [],
-  successCriteria: string = ''
+  successCriteria: string = '',
+  focusTime: number = 0
 ): WishEntry => {
   const now = new Date();
   const targetDate = new Date(now);
@@ -52,6 +53,7 @@ export const createWishEntry = (
     tags: tags.filter(tag => tag.trim().length > 0),
     specificActions: specificActions.filter(action => action.trim().length > 0),
     successCriteria: successCriteria.trim(),
+    focusTime: Math.max(0, focusTime), // 确保专注时间不为负数
   };
 };
 

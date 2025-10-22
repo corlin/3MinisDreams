@@ -13,6 +13,7 @@ import { StorageService } from '../services/storageService';
 import { createWishEntry, validateWishEntry, getCategoryDisplayName, generateUserId } from '../utils/wishUtils';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import Timer from '../components/Timer';
 import { COLORS, SPACING, FONT_SIZES } from '../constants';
 
 const WISH_CATEGORIES: WishCategory[] = [
@@ -33,6 +34,8 @@ export default function WishEntryScreen() {
   const [priority, setPriority] = useState<Priority>('medium');
   const [motivationLevel, setMotivationLevel] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
+  const [focusTime, setFocusTime] = useState(0);
+  const [showTimer, setShowTimer] = useState(true);
 
   const handleSaveWish = async () => {
     // 表单验证
@@ -55,16 +58,21 @@ export default function WishEntryScreen() {
         category,
         priority,
         userId,
-        motivationLevel
+        motivationLevel,
+        [], // tags
+        [], // specificActions
+        '', // successCriteria
+        focusTime
       );
 
       // 保存到本地存储
       await StorageService.saveWishEntry(newWish);
 
       // 显示成功提示
+      const focusTimeText = focusTime > 0 ? `\n\n专注时间：${Math.floor(focusTime / 60)}分${focusTime % 60}秒` : '';
       Alert.alert(
         '愿望已记录 ✨',
-        `你的愿望"${title}"已成功记录！\n\n一周后（${newWish.targetDate.toLocaleDateString()}）记得回来查看实现情况哦！`,
+        `你的愿望"${title}"已成功记录！${focusTimeText}\n\n一周后（${newWish.targetDate.toLocaleDateString()}）记得回来查看实现情况哦！`,
         [
           {
             text: '继续记录',
@@ -75,6 +83,8 @@ export default function WishEntryScreen() {
               setCategory('personal_growth');
               setPriority('medium');
               setMotivationLevel(5);
+              setFocusTime(0);
+              setShowTimer(true);
             }
           }
         ]
@@ -142,6 +152,53 @@ export default function WishEntryScreen() {
     </Card>
   );
 
+  const handleTimerComplete = (completedFocusTime: number) => {
+    setFocusTime(completedFocusTime);
+    setShowTimer(false);
+  };
+
+  const handleTimerUpdate = (remainingTime: number, currentFocusTime: number) => {
+    setFocusTime(currentFocusTime);
+  };
+
+  const renderTimer = () => {
+    if (!showTimer && focusTime > 0) {
+      return (
+        <Card style={styles.sectionCard}>
+          <View style={styles.timerCompletedContainer}>
+            <Text style={styles.timerCompletedTitle}>✅ 专注时间已完成</Text>
+            <Text style={styles.timerCompletedText}>
+              专注时长：{Math.floor(focusTime / 60)}分{focusTime % 60}秒
+            </Text>
+            <TouchableOpacity 
+              style={styles.restartTimerButton}
+              onPress={() => {
+                setShowTimer(true);
+                setFocusTime(0);
+              }}
+            >
+              <Text style={styles.restartTimerButtonText}>重新开始计时</Text>
+            </TouchableOpacity>
+          </View>
+        </Card>
+      );
+    }
+
+    if (showTimer) {
+      return (
+        <Card style={styles.sectionCard}>
+          <Timer
+            duration={180} // 3分钟
+            onComplete={handleTimerComplete}
+            onTimeUpdate={handleTimerUpdate}
+          />
+        </Card>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
@@ -181,6 +238,7 @@ export default function WishEntryScreen() {
 
       {renderCategorySelector()}
       {renderMotivationSlider()}
+      {renderTimer()}
 
       <View style={styles.actionContainer}>
         <Button
@@ -335,5 +393,31 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  timerCompletedContainer: {
+    alignItems: 'center',
+    padding: SPACING.md,
+  },
+  timerCompletedTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: '600',
+    color: COLORS.primary,
+    marginBottom: SPACING.sm,
+  },
+  timerCompletedText: {
+    fontSize: FONT_SIZES.md,
+    color: COLORS.text,
+    marginBottom: SPACING.md,
+  },
+  restartTimerButton: {
+    backgroundColor: COLORS.textSecondary,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    borderRadius: 20,
+  },
+  restartTimerButtonText: {
+    color: '#ffffff',
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
   },
 });
