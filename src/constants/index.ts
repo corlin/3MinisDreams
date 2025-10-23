@@ -11,6 +11,7 @@ export const LIGHT_COLORS = {
   border: '#e2e8f0',
   error: '#ef4444',
   success: '#10b981',
+  disabled: '#94a3b8',
 };
 
 export const DARK_COLORS = {
@@ -23,6 +24,7 @@ export const DARK_COLORS = {
   border: '#334155',
   error: '#f87171',
   success: '#34d399',
+  disabled: '#64748b',
 };
 
 export const getColors = (theme: AppTheme) => {

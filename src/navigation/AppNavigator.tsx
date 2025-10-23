@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text, Platform } from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 import HomeScreen from '../screens/HomeScreen';
 import WishEntryScreen from '../screens/WishEntryScreen';
 import ReviewScreen from '../screens/ReviewScreen';
@@ -13,6 +14,9 @@ import SettingsScreen from '../screens/SettingsScreen';
 import WebNotificationDemoScreen from '../screens/WebNotificationDemoScreen';
 import UserProfileEditScreen from '../screens/UserProfileEditScreen';
 import ThemeSettingsScreen from '../screens/ThemeSettingsScreen';
+import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 
 export type TabParamList = {
   WishEntry: undefined;
@@ -34,6 +38,11 @@ export type ProfileStackParamList = {
   ThemeSettings: undefined;
 };
 
+export type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
 export type RootStackParamList = {
   MainTabs: undefined;
   Home: undefined;
@@ -41,6 +50,7 @@ export type RootStackParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
 const WishStack = createStackNavigator<WishStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
 
@@ -178,12 +188,35 @@ function MainTabNavigator() {
   );
 }
 
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
 export default function AppNavigator() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <AuthLoadingScreen />;
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
-      </Stack.Navigator>
+      {user ? (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+        </Stack.Navigator>
+      ) : (
+        <AuthNavigator />
+      )}
     </NavigationContainer>
   );
 }

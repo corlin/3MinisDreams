@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { COLORS, SPACING, FONT_SIZES, getColors } from '../constants';
 import { User } from '../types';
 import { UserService } from '../services/userService';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { user: authUser, signOut } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +49,30 @@ export default function ProfileScreen() {
     navigation.navigate('ThemeSettings' as never);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      '确认登出',
+      '您确定要登出吗？',
+      [
+        {
+          text: '取消',
+          style: 'cancel',
+        },
+        {
+          text: '登出',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut();
+            } catch (error: any) {
+              Alert.alert('登出失败', error.message);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -67,10 +93,10 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.userInfo}>
             <Text style={[styles.userName, { color: colors.text }]}>
-              {user?.nickname || '愿望追梦人'}
+              {authUser?.displayName || user?.nickname || '愿望追梦人'}
             </Text>
             <Text style={[styles.userDescription, { color: colors.textSecondary }]}>
-              {user?.description || '每天记录愿望，追求更好的自己'}
+              {authUser?.email || user?.description || '每天记录愿望，追求更好的自己'}
             </Text>
           </View>
         </View>
@@ -111,6 +137,16 @@ export default function ProfileScreen() {
               <Text style={[styles.menuItemArrow, { color: colors.textSecondary }]}>›</Text>
             </TouchableOpacity>
           )}
+        </View>
+
+        <View style={styles.menuContainer}>
+          <TouchableOpacity 
+            style={[styles.menuItem, styles.logoutButton, { backgroundColor: colors.surface }]} 
+            onPress={handleLogout}
+          >
+            <Text style={[styles.menuItemText, styles.logoutText]}>🚪 登出</Text>
+            <Text style={[styles.menuItemArrow, { color: colors.textSecondary }]}>›</Text>
+          </TouchableOpacity>
         </View>
         
         <View style={[styles.infoSection, { backgroundColor: colors.surface }]}>
@@ -214,5 +250,12 @@ const styles = StyleSheet.create({
   versionText: {
     fontSize: FONT_SIZES.xs,
     textAlign: 'center',
+  },
+  logoutButton: {
+    borderWidth: 1,
+    borderColor: '#ef4444',
+  },
+  logoutText: {
+    color: '#ef4444',
   },
 });
